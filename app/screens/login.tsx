@@ -3,7 +3,7 @@ import { ImageBackground, SafeAreaView, StyleSheet, TextInput, useWindowDimensio
 import { Button, Checkbox, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-const SignUpScreen = ({ navigation } : {navigation: any}) => {
+const LogInScreen = ({ navigation } : {navigation: any}) => {
   const { width, height } = useWindowDimensions(); // Hook for dynamic screen size
   let fieldsWidth, signupWidth;
 
@@ -37,18 +37,15 @@ const SignUpScreen = ({ navigation } : {navigation: any}) => {
     logoImgSource = logoImgs.small.uri;
   }
 
-  const [username, onChangeUsername] = useState('');
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
-  const [confPassword, onChangeConfPassword] = useState('');
-  const [isUsernameFieldFocused, setUsernameFieldFocused] = useState(false);
+  const [checkedRememberme, setCheckedRememberme] = useState(false);
   const [isEmailFieldFocused, setEmailFieldFocused] = useState(false);
   const [isPassFieldFocused, setPassFieldFocused] = useState(false);
-  const [isConfPassFieldFocused, setConfPassFieldFocused] = useState(false);
 
   return (
     <View style={styles.viewContainer}>
-      <ImageBackground source={require('@/assets/images/signup_screen.svg')} resizeMode="cover" style={styles.image}>
+      <ImageBackground source={require('@/assets/images/login_screen.svg')} resizeMode="cover" style={styles.image}>
         <View style={styles.loginContainer}>
           <SafeAreaProvider style={fieldsWidth}>
             <SafeAreaView>
@@ -56,17 +53,7 @@ const SignUpScreen = ({ navigation } : {navigation: any}) => {
                 <Image source={logoImgSource}/>
               </View>
 
-              <Text variant="titleMedium" style={[styles.label, {fontWeight: 'bold'}]}>Create your account</Text>
-
-              <Text variant="labelMedium" style={styles.label}>Username</Text>
-              <TextInput
-                onChangeText={onChangeUsername}
-                value={username}
-                style={[styles.inputStyle, isUsernameFieldFocused && styles.inputFocused]}
-                onFocus={() => setUsernameFieldFocused(true)}
-                onBlur={() => setUsernameFieldFocused(false)}
-              />
-
+              <Text variant="titleMedium" style={[styles.label, {fontWeight: 'bold'}]}>Log in to your account</Text>
               <Text variant="labelMedium" style={styles.label}>Email</Text>
               <TextInput
                 onChangeText={onChangeEmail}
@@ -84,21 +71,35 @@ const SignUpScreen = ({ navigation } : {navigation: any}) => {
                 onFocus={() => setPassFieldFocused(true)}
                 onBlur={() => setPassFieldFocused(false)}
               />
-
-              <Text variant="labelMedium" style={styles.label}>Confirm password</Text>
-              <TextInput
-                onChangeText={onChangeConfPassword}
-                value={confPassword}
-                style={[styles.inputStyle, isConfPassFieldFocused && styles.inputFocused]}
-                onFocus={() => setConfPassFieldFocused(true)}
-                onBlur={() => setConfPassFieldFocused(false)}
-              />
             </SafeAreaView>
+
+            <View style={[styles.checkboxContainer]}>
+              <Checkbox.Item status={checkedRememberme ? 'checked' : 'unchecked'} 
+              labelStyle={{color: 'rgb(107 106 113)', fontSize:14}} label="Remember me" 
+              onPress={() => {setCheckedRememberme(!checkedRememberme); }} />
+
+              <Text style={[styles.linkLabel, {paddingLeft: 16}]}
+                  onPress={() => {
+                    navigation.navigate('ResetPassword')
+                    // Navigate after signing in. You may want to tweak this to ensure sign-in is
+                    // successful before navigating.d
+                  }}>Forgot password?
+              </Text>
+            </View>
           </SafeAreaProvider>
 
           <View style={signupWidth}>
-              <Button style={styles.signupBtn} mode="elevated" onPress={() => navigation.navigate('Home')}><Text style={styles.signupBtnText}>Sign up</Text></Button>
-          </View>
+              <Button style={styles.signupBtn} mode="elevated" onPress={() => navigation.navigate('Home')}><Text style={styles.signupBtnText}>Log in</Text></Button>
+              
+              <Text variant="labelMedium" style={[styles.label,{justifyContent: 'center', display:'flex', flexWrap: 'wrap', color: 'black'}]}>Don't have an account? &nbsp;&nbsp;
+                  <Text style={styles.linkLabel}
+                    onPress={() => {
+                      navigation.navigate('signup')
+                      // Navigate after signing in. You may want to tweak this to ensure sign-in is
+                      // successful before navigating.d
+                    }}>Sign Up</Text>
+                </Text>  
+            </View>
         </View>
       </ImageBackground>
     </View>
@@ -114,6 +115,10 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderWidth: 2,
     outlineColor: 'rgb(169 10 152)'
+  },
+  linkLabel: {
+    color: "rgb(169 10 152)",
+    fontWeight: "bold"
   },
   label: {
     marginTop: 20,
@@ -146,6 +151,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: -100
   },
+  checkboxContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    flexWrap: 'wrap'
+  },
   signupBtn: {
     marginTop: 20,
     fontWeight: "bold",
@@ -177,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreen;
+export default LogInScreen;
