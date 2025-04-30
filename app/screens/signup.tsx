@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     paddingLeft: 15,
-    borderRadius: '20px',
+    borderRadius: 20,
     width: '100%',
     height: 40,
     backgroundColor: 'rgb(218 207 218)'

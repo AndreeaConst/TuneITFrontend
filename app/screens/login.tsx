@@ -1,40 +1,29 @@
+import SvgComponentLoginScreen from '@/assets/images/login_screenSVG';
+import SvgComponentLogoText160x160 from '@/assets/images/logo_text160x160SVG';
+import SvgComponentLogoText300x300 from '@/assets/images/logo_text300x300SVG';
 import React, { useState } from 'react';
-import { ImageBackground, SafeAreaView, StyleSheet, TextInput, useWindowDimensions, View, Image } from 'react-native';
+import { ImageBackground, SafeAreaView, StyleSheet, TextInput, useWindowDimensions, View, Image, ScrollView } from 'react-native';
 import { Button, Checkbox, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+
 const LogInScreen = ({ navigation } : {navigation: any}) => {
   const { width, height } = useWindowDimensions(); // Hook for dynamic screen size
-  let fieldsWidth, signupWidth;
-
-  const logoImgs = {
-    small: {
-      imgName: 'Small', 
-      uri: require('@/assets/images/logo_text160x160.svg')
-    },
-    regular: {
-      imgName: 'Regular', 
-      uri: require('@/assets/images/logo_text300x300.svg')
-    }
-  }
-
-  let logoImgSource = logoImgs.regular.uri;
+  let fieldsWidth, logoMargin = -40;
+  let logoImgSource = <SvgComponentLogoText300x300/>;
 
   if(width >= 1200) {
     fieldsWidth = styles.fieldsWidthXL;
-    signupWidth = styles.signupWidthXL;
   } else if(width >= 992 && width <= 1199) {
     fieldsWidth = styles.fieldsWidthL;
-    signupWidth = styles.signupWidthL;
   } else if(width >= 768 && width <= 991) {
     fieldsWidth = styles.fieldsWidthM;
   } else if(width >= 576 && width <= 767) {
     fieldsWidth = styles.fieldsWidthSM;
-    signupWidth = styles.fieldsWidthSM;
   } else if(width <= 575) {
     fieldsWidth = styles.fieldsWidthXSM;
-    signupWidth = styles.fieldsWidthXSM;
-    logoImgSource = logoImgs.small.uri;
+    logoMargin = 50;
+    logoImgSource = <SvgComponentLogoText160x160/>;
   }
 
   const [email, onChangeEmail] = useState('');
@@ -44,13 +33,21 @@ const LogInScreen = ({ navigation } : {navigation: any}) => {
   const [isPassFieldFocused, setPassFieldFocused] = useState(false);
 
   return (
-    <View style={styles.viewContainer}>
-      <ImageBackground source={require('@/assets/images/login_screen.svg')} resizeMode="cover" style={styles.image}>
-        <View style={styles.loginContainer}>
+    <ScrollView >
+    <View>
+        <SvgComponentLoginScreen 
+        key={`${width}-${height}`} // Force re-render when dimensions change
+          width={width} // Dynamically set width
+          height={height} // Dynamically set height
+          preserveAspectRatio="xMidYMid slice" // Maintain aspect ratio
+          style={StyleSheet.absoluteFillObject}
+        />
+
+        <View style={[styles.loginContainer, {marginTop: logoMargin}]}>
           <SafeAreaProvider style={fieldsWidth}>
             <SafeAreaView>
               <View style={styles.logoContainer}>
-                <Image source={logoImgSource}/>
+                {logoImgSource}
               </View>
 
               <Text variant="titleMedium" style={[styles.label, {fontWeight: 'bold'}]}>Log in to your account</Text>
@@ -86,39 +83,44 @@ const LogInScreen = ({ navigation } : {navigation: any}) => {
                   }}>Forgot password?
               </Text>
             </View>
-          </SafeAreaProvider>
 
-          <View style={signupWidth}>
+            <View>
               <Button style={styles.signupBtn} mode="elevated" onPress={() => navigation.navigate('Home')}><Text style={styles.signupBtnText}>Log in</Text></Button>
-              
-              <Text variant="labelMedium" style={[styles.label,{justifyContent: 'center', display:'flex', flexWrap: 'wrap', color: 'black'}]}>Don't have an account? &nbsp;&nbsp;
-                  <Text style={styles.linkLabel}
-                    onPress={() => {
-                      navigation.navigate('signup')
-                      // Navigate after signing in. You may want to tweak this to ensure sign-in is
-                      // successful before navigating.d
-                    }}>Sign Up</Text>
-                </Text>  
-            </View>
+
+              <View style={styles.signupLabelContainer}>
+                <Text variant="labelMedium" style={[styles.label, {color: 'black'}]}>
+                  Don't have an account?
+                </Text>
+
+                <Text
+                  style={[styles.label, styles.linkLabel]}
+                  onPress={() => {
+                    navigation.navigate('signup');
+                  }}
+                >Sign Up</Text>
+              </View> 
+          </View>
+          </SafeAreaProvider>
         </View>
-      </ImageBackground>
     </View>
+    </ScrollView>
+
   );
 }
 
 const styles = StyleSheet.create({
   logoContainer: {
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: -45
+    alignItems: 'center'
   },
   inputFocused: {
     borderWidth: 2,
-    outlineColor: 'rgb(169 10 152)'
+    outlineColor: 'rgb(169 10 152)',
+    borderColor: 'rgb(169 10 152)' //for mobile
   },
   linkLabel: {
     color: "rgb(169 10 152)",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   label: {
     marginTop: 20,
@@ -128,28 +130,17 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     paddingLeft: 15,
-    borderRadius: '20px',
+    borderRadius: 20,
     width: '100%',
     height: 40,
     backgroundColor: 'rgb(218 207 218)'
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%'
-  },
-  viewContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
   },
   loginContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -100
+    flex: 1,
+    width: '100%',
   },
   checkboxContainer: {
     display: 'flex',
@@ -157,6 +148,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap'
+  },
+  signupLabelContainer: {
+    justifyContent: 'center', 
+    flexDirection: 'row',
+    flexWrap: 'wrap', 
+    display: 'flex',
+    alignItems: 'center',
+    color: 'black',
   },
   signupBtn: {
     marginTop: 20,
@@ -179,14 +178,8 @@ const styles = StyleSheet.create({
     width: '50%',
   },
   fieldsWidthXSM: {
-    width: '50%',
-  },
-  signupWidthXL: {
-    width: '20%',
-  },
-  signupWidthL: {
-    width: '25%',
-  },
+    width: '70%'
+  }
 });
 
 export default LogInScreen;
